@@ -1,0 +1,28 @@
+(ns word-count
+    (:require [clojure.string :as s]))
+
+(defn recursive-count [phrase]
+    (loop [freq {} unique-words (distinct phrase) complete-phrase phrase]
+        (if (> (count unique-words) 0)
+            (let [current (first unique-words)]
+                (recur
+                    (assoc freq current (count (filter (fn [x] (= current x)) complete-phrase)))
+                    (next unique-words)
+                    complete-phrase
+                )
+            )
+            freq
+        )
+    )
+)
+
+(defn word-count [phrase]
+    (recursive-count (map s/lower-case (filter (fn [x] (not= "" x)) (s/split phrase #"\W"))))
+)
+
+
+; this also works:
+;
+; (defn word-count [phrase]
+;     (frequencies (map s/lower-case (filter (fn [x] (not= "" x)) (s/split phrase #"\W"))))
+; )
